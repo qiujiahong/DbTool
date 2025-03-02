@@ -1,0 +1,470 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 智能问数
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.5
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: knowledge-retrieval
+      id: 1740880015180-source-1740881356155-target
+      source: '1740880015180'
+      sourceHandle: source
+      target: '1740881356155'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1740881356155-source-llm-target
+      source: '1740881356155'
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: tool
+      id: llm-source-1740883144103-target
+      source: llm
+      sourceHandle: source
+      target: '1740883144103'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: llm
+      id: 1740883144103-source-1740884335124-target
+      source: '1740883144103'
+      sourceHandle: source
+      target: '1740884335124'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: tool
+      id: 1740884335124-source-1740886622325-target
+      source: '1740884335124'
+      sourceHandle: source
+      target: '1740886622325'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: tool
+        targetType: code
+      id: 1740886622325-source-1740903040125-target
+      source: '1740886622325'
+      sourceHandle: source
+      target: '1740903040125'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: if-else
+      id: 1740903040125-source-1740905159962-target
+      source: '1740903040125'
+      sourceHandle: source
+      target: '1740905159962'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: answer
+      id: 1740905159962-false-1740905214614-target
+      source: '1740905159962'
+      sourceHandle: 'false'
+      target: '1740905214614'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: answer
+      id: 1740905159962-true-1740906275963-target
+      source: '1740905159962'
+      sourceHandle: 'true'
+      target: '1740906275963'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables: []
+      height: 54
+      id: '1740880015180'
+      position:
+        x: -31
+        y: -23
+      positionAbsolute:
+        x: -31
+        y: -23
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1740881356155'
+          - result
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-ai/DeepSeek-V3
+          provider: siliconflow
+        prompt_template:
+        - id: 1007ad3b-6361-4c37-9cf1-1dc8802c8bbd
+          role: system
+          text: "你是一个专业的数据库查询助手，专注于生成可直接执行的 SQL 语句。以下是 `enterprise_metrics` 表的结构：\n\
+            \n```sql\nCREATE TABLE enterprise_metrics (\n    id INT AUTO_INCREMENT\
+            \ PRIMARY KEY,          -- 主键 ID\n    enterprise_name VARCHAR(100) NOT\
+            \ NULL,      -- 企业名称\n    year INT NOT NULL,                         \
+            \ -- 年份\n    revenue DECIMAL(15, 2) NOT NULL,            -- 营业收入（单位：万元）\n\
+            \    profit DECIMAL(15, 2) NOT NULL,             -- 利润（单位：万元）\n    employee_count\
+            \ INT NOT NULL,                -- 员工人数\n    asset DECIMAL(15, 2) NOT NULL,\
+            \              -- 总资产（单位：万元）\n    liability DECIMAL(15, 2) NOT NULL, \
+            \         -- 总负债（单位：万元）\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\
+            \ -- 记录创建时间\n);\n```\n请根据用户需求，直接返回可执行的 SQL 语句，不要包含任何额外解释或文字。\n如果回答不了问题，则答复抱歉我不知道您问的问题。\n\
+            \n相关业务知识如下：\n{{#context#}}\n\n"
+        - id: c47e627f-645d-48a1-831f-8b05317078a6
+          role: user
+          text: ''
+        selected: false
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: llm
+      position:
+        x: 618.3117752557437
+        y: -215.1627419913444
+      positionAbsolute:
+        x: 618.3117752557437
+        y: -215.1627419913444
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 88506171-f7a3-4882-ae32-51f48e4e3412
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: reranking_model
+          reranking_model:
+            model: netease-youdao/bce-reranker-base_v1
+            provider: siliconflow
+          score_threshold: null
+          top_k: 6
+        query_variable_selector:
+        - '1740880015180'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索
+        type: knowledge-retrieval
+      height: 92
+      id: '1740881356155'
+      position:
+        x: 248
+        y: -121.31950791077288
+      positionAbsolute:
+        x: 248
+        y: -121.31950791077288
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        provider_id: c4f606aa-2ff6-47cd-937f-e52cd8ba6713
+        provider_name: 数据库
+        provider_type: api
+        selected: false
+        title: executeSql
+        tool_configurations: {}
+        tool_label: executeSql
+        tool_name: executeSql
+        tool_parameters:
+          sql:
+            type: mixed
+            value: '{{#llm.text#}}'
+        type: tool
+      height: 54
+      id: '1740883144103'
+      position:
+        x: 889.531458824828
+        y: 27.033743612652074
+      positionAbsolute:
+        x: 889.531458824828
+        y: 27.033743612652074
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-ai/DeepSeek-V3
+          provider: siliconflow
+        prompt_template:
+        - id: 6051fe93-3f63-4fde-9987-637f073b7bf4
+          role: system
+          text: '文字2句话总结一下如下数据：
+
+            {{#1740883144103.text#}}'
+        selected: false
+        title: LLM答复
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: '1740884335124'
+      position:
+        x: 1232.0305805332712
+        y: -4.067487225304134
+      positionAbsolute:
+        x: 1232.0305805332712
+        y: -4.067487225304134
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        provider_id: c4f606aa-2ff6-47cd-937f-e52cd8ba6713
+        provider_name: 数据库
+        provider_type: api
+        selected: false
+        title: showData
+        tool_configurations: {}
+        tool_label: showData
+        tool_name: showData
+        tool_parameters:
+          data:
+            type: mixed
+            value: '{{#1740883144103.text#}}'
+        type: tool
+      height: 54
+      id: '1740886622325'
+      position:
+        x: 1467.138137529989
+        y: -292.8246056911322
+      positionAbsolute:
+        x: 1467.138137529989
+        y: -292.8246056911322
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef main(data: str) -> dict:\n    print(\"输入数据----:\"\
+          , data)  # 打印输入数据\n\n    if data.startswith('\"') and data.endswith('\"\
+          '):\n        data = data[1:-1]\n\n    # # 第一步：解析最外层的 JSON 字符串\n    outer_dict\
+          \ = json.loads(data)\n    \n    # 第二步：直接获取 content 字段的字符串值\n    content_str\
+          \ = outer_dict[\"content\"]\n    \n    # 返回最终的结果\n    return {\n       \
+          \ \"result\": outer_dict[\"chartType\"],\n        \"content\": content_str\
+          \  # 直接返回字符串\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          content:
+            children: null
+            type: string
+          result:
+            children: null
+            type: string
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1740886622325'
+          - text
+          variable: data
+      height: 54
+      id: '1740903040125'
+      position:
+        x: 1657.6750203975557
+        y: -49.39015821545789
+      positionAbsolute:
+        x: 1657.6750203975557
+        y: -49.39015821545789
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 42ee9de9-a1f2-42af-8275-69a5077df89c
+            value: line
+            varType: string
+            variable_selector:
+            - '1740903040125'
+            - result
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 126
+      id: '1740905159962'
+      position:
+        x: 1958.238312101079
+        y: 122.01729158218981
+      positionAbsolute:
+        x: 1958.238312101079
+        y: 122.01729158218981
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: "执行查询:  \n{{#llm.text#}}\n总结：\n{{#1740884335124.text#}}\n<div>\n \
+          \ {{#1740903040125.content#}}\n</div>"
+        desc: ''
+        selected: false
+        title: 直接回复 3
+        type: answer
+        variables: []
+      height: 141
+      id: '1740905214614'
+      position:
+        x: 2416.9855485652547
+        y: 133.77525040821968
+      positionAbsolute:
+        x: 2416.9855485652547
+        y: 133.77525040821968
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: "执行查询:  \n{{#llm.text#}}\n总结：\n{{#1740884335124.text#}}\n\n  {{#1740903040125.content#}}"
+        desc: ''
+        selected: false
+        title: 直接回复 2
+        type: answer
+        variables: []
+      height: 141
+      id: '1740906275963'
+      position:
+        x: 2439.7212970629107
+        y: -325.85714065916835
+      positionAbsolute:
+        x: 2439.7212970629107
+        y: -325.85714065916835
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: -228.86064853145513
+      y: 735.1785703295841
+      zoom: 0.49999999999999994
