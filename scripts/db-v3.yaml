@@ -126,3 +126,6 @@
 # select company_name 公司名称,metric_value 指标值 from enterprise_metrics where period=2024 and metric_name="营业收入 (亿元)"
 
 # 应答数据：  {"columns": ["公司名称", "指标值"], "rows": [["华润XXX", 135.0], ["华润怡宝", 135.0], ["华润雪花", 135.0]], "row_count": 3}
+
+
+# {"columns": ["企业名称", "年份", "营业收入"], "rows": [["企业 A", 2020, 5000.0], ["企业 A", 2021, 5500.0], ["企业 A", 2022, 6000.0]], "row_count": 3}

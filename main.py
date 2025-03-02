@@ -151,32 +151,45 @@ def show_data(data: DataQuery):
             }
     else:
         # 定义模板
-        template_str = """
-        <table border="1" style="width: 100%; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    {% for column in columns %}
-                    <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                <tr>
-                    {% for cell in row %}
-                    <td>{{ cell }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        """
-        # 渲染模板
-        template = Template(template_str)
-        html_output = template.render(columns=columns, rows=rows).replace("\n", "")
+        # template_str = """
+        # <table border="1" style="width: 100%; border-collapse: collapse;">
+        #     <thead>
+        #         <tr>
+        #             {% for column in columns %}
+        #             <th>{{ column }}</th>
+        #             {% endfor %}
+        #         </tr>
+        #     </thead>
+        #     <tbody>
+        #         {% for row in rows %}
+        #         <tr>
+        #             {% for cell in row %}
+        #             <td>{{ cell }}</td>
+        #             {% endfor %}
+        #         </tr>
+        #         {% endfor %}
+        #     </tbody>
+        # </table>
+        # """
+        # # 渲染模板
+        # template = Template(template_str)
+        # html_output = template.render(columns=columns, rows=rows).replace("\n", "")
+        # return {
+        #     "chartType": "table",
+        #     "content": html_output
+        # }
+         # 构建markdown表格字符串
+        # 表头行
+        markdown_str = "| " + " | ".join(columns) + " |\n"
+        # 分隔行
+        markdown_str += "| " + " | ".join(["---"] * len(columns)) + " |\n"
+        # 数据行
+        for row in rows:
+            markdown_str += "| " + " | ".join(str(cell) for cell in row) + " |\n"
+            
         return {
             "chartType": "table",
-            "content": html_output
+            "content": markdown_str
         }
     #
     # Chart:
