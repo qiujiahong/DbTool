@@ -33,9 +33,13 @@ def clean_sql_query(query):
     if query.startswith("```sql"):
         query = query[len("```sql"):].strip()
 
+    if query.startswith("```sql"):
+        query = query[len("```sql"):].strip()
+    query = query.replace("执行查询:","").replace("```sql","")
+
     # 去掉 ``` 后缀
-    if query.endswith("```"):
-        query = query[:-len("```")].strip()
+    # if query.endswith("```"):
+    #     query = query[:-len("```")].strip()
 
     return query
 
@@ -108,31 +112,75 @@ def show_data(data: DataQuery):
 
     data_dict = json.loads(cleaned_data)
     columns = data_dict["columns"]
+
+    print(type(columns))
     rows = data_dict["rows"]
-    # 定义模板
-    template_str = """
-    <table border="1" style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                {% for column in columns %}
-                <th>{{ column }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                {% for cell in row %}
-                <td>{{ cell }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    """
-    # 渲染模板
-    template = Template(template_str)
 
-    html_output = template.render(columns=columns, rows=rows).replace("\n", "")
-
-    return html_output
+    if len(columns) ==3 :
+        # 如果第一例 columns 的第一个值相等，且columns[1]是年份	则
+        first_col_values = [row[0] for row in rows]
+        is_first_col_same = len(set(first_col_values)) == 1
+        is_second_col_year = all(str(row[1]).isdigit() and len(str(row[1])) == 4 for row in rows)
+        
+        if is_first_col_same and is_second_col_year:
+            # 构建 ECharts 数据格式
+            years = [row[1] for row in rows]  # 获取年份作为 x 轴数据
+            values = [row[2] for row in rows]  # 获取第三列的值作为 y 轴数据
+            
+            echarts_data = {
+                "xAxis": {
+                    "type": "category",
+                    "data": years
+                },
+                "yAxis": {
+                    "type": "value"
+                },
+                "series": [{
+                    "data": values,
+                    "type": "line",
+                    "barWidth": "60%",  #
+                    "showBackground": True,
+                    "backgroundStyle": {
+                        "color": "rgba(180, 180, 180, 0.2)"
+                    }
+                }]
+            }
+            return {
+                "chartType": "line",
+                "content": f"```echarts\n{json.dumps(echarts_data)}\n```"
+            }
+    else:
+        # 定义模板
+        template_str = """
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        """
+        # 渲染模板
+        template = Template(template_str)
+        html_output = template.render(columns=columns, rows=rows).replace("\n", "")
+        return {
+            "chartType": "table",
+            "content": html_output
+        }
+    #
+    # Chart:
+    # type: object
+    # required:
+    # - chartType
+    # - content

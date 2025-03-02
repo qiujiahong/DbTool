@@ -1,0 +1,128 @@
+# Taken from https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.0/petstore.yaml
+
+    openapi: "3.0.0"
+    info:
+      version: 1.0.0
+      title: 数据库
+      license:
+        name: MIT
+    servers:
+      # - url: http://127.0.0.1:8000
+      - url: http://host.docker.internal:8000
+    paths:
+      /execute-sql/:
+        post:
+          summary: 执行SQL查询
+          operationId: executeSql
+          tags:
+            - database
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - sql
+                  properties:
+                    sql:
+                      type: string
+                      description: 要执行的SQL语句
+                    params:
+                      type: array
+                      items:
+                        type: object
+                      description: SQL参数（可选）
+          responses:
+            '200':
+              description: 查询执行成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      columns:
+                        type: array
+                        items:
+                          type: string
+                        description: 结果集列名
+                      rows:
+                        type: array
+                        items:
+                          type: array
+                          items:
+                            type: object
+                        description: 查询结果数据
+                      row_count:
+                        type: integer
+                        description: 返回的数据行数
+            '500':
+              description: SQL执行错误
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/Error"
+      /show-data/:
+        post:
+          summary: 渲染数据
+          operationId: showData
+          tags:
+            - showdata
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - data
+                  properties:
+                    data:
+                      type: string
+                      description: 对象的json字符串
+          responses:
+            '200':
+              description: 查询执行成功
+              content:
+                application/json:
+                  schema:
+                    # type: string
+                    $ref: "#/components/schemas/Chart"
+            '500':
+              description: SQL执行错误
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/Error"
+    components:
+      schemas:
+        Chart:
+          type: object
+          required:
+            - chartType
+            - content
+          properties:
+            chartType:
+              type: string
+            content:
+              type: string
+#        Pets:
+#          type: array
+#          maxItems: 100
+#          items:
+#            $ref: "#/components/schemas/Pet"
+        Error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: integer
+              format: int32
+            message:
+              type: string
+
+# select company_name 公司名称,metric_value 指标值 from enterprise_metrics where period=2024 and metric_name="营业收入 (亿元)"
+
+# 应答数据：  {"columns": ["公司名称", "指标值"], "rows": [["华润XXX", 135.0], ["华润怡宝", 135.0], ["华润雪花", 135.0]], "row_count": 3}
